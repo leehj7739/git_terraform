@@ -37,3 +37,11 @@ jobs:
           TF_VAR_username: ${{ secrets.TF_VAR_username }}
           TF_VAR_password: ${{ secrets.TF_VAR_password }}
           TF_VAR_tenant_name: ${{ secrets.TF_VAR_tenant_name }}
+
+      - name: Terraform Plan
+        working-directory: ./files
+        run: terraform plan -out=tfplan
+        env:
+          TF_VAR_username: ${{ secrets.TF_VAR_username }}
+          TF_VAR_password: ${{ secrets.TF_VAR_password }}
+          TF_VAR_tenant_name: ${{ secrets.TF_VAR_tenant_name }}
