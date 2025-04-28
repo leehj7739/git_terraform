@@ -1,6 +1,3 @@
-username     = var.username
-password     = var.password
-tenant_name  = var.tenant_name
 region       = "kr-central-2"
 project_name = "kc-sfacspace"
 dev_name = "lkz"
