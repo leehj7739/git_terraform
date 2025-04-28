@@ -1,6 +1,3 @@
-username     = "leehj7739@gmail.com"
-password     = "azx77397739!"
-tenant_name  = "kc-sfacspace"
 region       = "kr-central-2"
 project_name = "kc-sfacspace"
 dev_name     = "lkz"
@@ -22,4 +19,6 @@ data_volume_size   = 50
 
 # 오브젝트 스토리지 설정
 create_s3_bucket = false
-s3_bucket_suffix = "unique-suffix-12345" 
+s3_bucket_suffix = "unique-suffix-12345"
+
+subnet_id = "97eca223-44eb-4a55-8082-aaa3686be094" 

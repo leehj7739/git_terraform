@@ -28,3 +28,8 @@ output "storage_container_name" {
   value       = var.create_s3_bucket ? openstack_objectstorage_container_v1.storage[0].name : null
 }
 
+output "lb_vip" {
+  description = "로드밸런서 VIP 주소"
+  value       = openstack_lb_loadbalancer_v2.lb.vip_address
+}
+

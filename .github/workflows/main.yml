@@ -68,6 +68,21 @@ jobs:
       run: terraform apply -auto-approve
       working-directory: .github/lab-terraform-modules
 
+    - name: Get Load Balancer VIP
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      id: lb_vip
+      run: |
+        LB_VIP=$(terraform output -raw lb_vip)
+        echo "LB_VIP=$LB_VIP" >> $GITHUB_ENV
+        echo "Load Balancer VIP: $LB_VIP"
+
+    - name: Check Load Balancer
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        echo "Waiting for Load Balancer to be active..."
+        sleep 60
+        curl -f http://${{ env.LB_VIP }}/hello || exit 1
+
     - name: Update Pull Request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'

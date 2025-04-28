@@ -105,3 +105,26 @@ resource "openstack_objectstorage_container_v1" "storage" {
 
   name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
 }
+
+# 로드밸런서 생성
+resource "openstack_lb_loadbalancer_v2" "lb" {
+  name          = "fastapi-lb"
+  vip_subnet_id = var.subnet_id
+  vip_address   = "192.168.0.100"  # 원하는 내부 IP 주소
+}
+
+# 리스너 생성
+resource "openstack_lb_listener_v2" "blue_listener" {
+  name            = "${var.dev_name}-blue-listener"
+  loadbalancer_id = openstack_lb_loadbalancer_v2.lb.id
+  protocol        = "HTTP"
+  protocol_port   = 80
+}
+
+# 블루 풀 생성
+resource "openstack_lb_pool_v2" "blue_pool" {
+  name        = "${var.dev_name}-blue-pool"
+  protocol    = "HTTP"
+  lb_method   = "ROUND_ROBIN"
+  listener_id = openstack_lb_listener_v2.blue_listener.id
+}
