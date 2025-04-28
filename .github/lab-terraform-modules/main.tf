@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "openstack" {
-  auth_url           = "https://iam.kakaocloud.com/identity/v3"
+  auth_url          = "https://iam.kakaocloud.com/identity/v3"
   region            = var.region
   user_name         = var.username
   password          = var.password
@@ -42,7 +42,7 @@ resource "openstack_networking_secgroup_rule_v2" "web_ssh" {
 
 # HTTP 규칙
 resource "openstack_networking_secgroup_rule_v2" "web_http" {
-  direction         = "ingress"
+  direction        = "ingress"
   ethertype        = "IPv4"
   protocol         = "tcp"
   port_range_min   = 80
