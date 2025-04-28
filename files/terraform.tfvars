@@ -22,4 +22,5 @@ create_s3_bucket   = false
 s3_bucket_suffix   = "unique-suffix-12345" 
 
 app_repository = "https://github.com/leehj7739/git_terraform.git"
+security_group_name = "default"
 
