@@ -18,11 +18,6 @@ output "instance_addresses" {
   value       = var.create_instance ? openstack_compute_instance_v2.web[0].network : null
 }
 
-output "floating_ip" {
-  description = "인스턴스에 할당된 Floating IP"
-  value       = var.create_instance ? openstack_networking_floatingip_v2.fip[0].address : null
-}
-
 output "data_volume_id" {
   description = "생성된 데이터 볼륨의 ID"
   value       = var.create_data_volume ? openstack_blockstorage_volume_v3.data[0].id : null
