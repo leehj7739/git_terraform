@@ -64,41 +64,12 @@ module "web_server" {
   user_data        = <<-EOF
     #cloud-config
     write_files:
+      - path: /root/app/fastapi_app.py
+        content: ${file("${path.module}/fastapi_app.py")}
+
       - path: /root/app/main.py
         content: |
-          from fastapi import FastAPI
-          from datetime import datetime
-          import os
-
-          DEPLOY_TIME_FILE = "/root/app/deploy_time.txt"
-
-          def save_deploy_time():
-              with open(DEPLOY_TIME_FILE, "w") as f:
-                  f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-          def get_deploy_time():
-              if os.path.exists(DEPLOY_TIME_FILE):
-                  with open(DEPLOY_TIME_FILE, "r") as f:
-                      return f.read()
-              return None
-
-          app = FastAPI()
-
-          @app.on_event("startup")
-          async def startup_event():
-              save_deploy_time()
-
-          @app.get("/")
-          async def root():
-              return {"message": "Hello from FastAPI!"}
-
-          @app.get("/hello")
-          async def hello():
-              return {
-                  "message": "Hello from FastAPI!",
-                  "deploy_time": get_deploy_time(),
-                  "current_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-              }
+          from fastapi_app import app
 
     runcmd:
       - mkdir -p /root/app
