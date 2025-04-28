@@ -33,3 +33,13 @@ output "lb_vip" {
   value       = openstack_lb_loadbalancer_v2.lb.vip_address
 }
 
+output "instance_ip" {
+  description = "인스턴스의 IP 주소"
+  value       = var.create_instance ? module.web_server[0].instance_addresses["private"] : null
+}
+
+output "instance_ips" {
+  description = "모든 인스턴스의 IP 주소"
+  value       = var.create_instance ? module.web_server[*].instance_addresses["private"] : []
+}
+

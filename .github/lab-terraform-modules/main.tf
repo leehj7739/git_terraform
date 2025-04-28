@@ -111,8 +111,8 @@ resource "openstack_objectstorage_container_v1" "storage" {
 resource "openstack_lb_loadbalancer_v2" "lb" {
   name          = "fastapi-lb"
   vip_subnet_id = var.subnet_id
-  vip_address   = "192.168.0.100"  # 원하는 내부 IP 주소
-  security_group_ids = [openstack_networking_secgroup_v2.web.id]  # 기존 보안 그룹 연결
+  vip_address   = "192.168.0.100"
+  security_group_ids = [openstack_networking_secgroup_v2.web.id]
 }
 
 # 리스너 생성
@@ -135,7 +135,7 @@ resource "openstack_lb_pool_v2" "blue_pool" {
 resource "openstack_lb_member_v2" "blue_members" {
   count         = var.create_instance ? 2 : 0
   pool_id       = openstack_lb_pool_v2.blue_pool.id
-  address       = module.web_server[count.index].instance_ip
+  address       = module.web_server[count.index].instance_addresses["private"]
   protocol_port = 80
   subnet_id     = var.subnet_id
 }
