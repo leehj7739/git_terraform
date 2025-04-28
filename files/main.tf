@@ -151,14 +151,13 @@ resource "openstack_compute_interface_attach_v2" "instance_interface" {
 module "app_server" {
   source = "./modules/app"
 
-  project_name      = var.project_name
-  environment       = var.environment
-  instance_count    = var.instance_count
-  image_id          = var.image_id
-  flavor_name       = var.flavor_name
-  key_name          = var.key_name
-  network_id        = var.network_id
-  subnet_id         = openstack_networking_subnet_v2.subnet.id
-  security_group_id = openstack_networking_secgroup_v2.web.id
-  app_repository    = var.app_repository
+  environment          = var.environment
+  instance_count       = var.instance_count
+  image_id            = var.image_id
+  flavor_name         = var.flavor_name
+  key_name            = var.key_name
+  security_group_name = openstack_networking_secgroup_v2.web.name
+  network_name        = var.network_name
+  floating_ip_pool    = var.floating_ip_pool
+  app_repository      = var.app_repository
 }
