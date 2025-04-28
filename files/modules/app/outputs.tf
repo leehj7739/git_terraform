@@ -1,5 +1,10 @@
-output "app_ip" {
-  description = "The floating IP of the first instance"
+output "instance_id" {
+  description = "App instance ID"
+  value       = openstack_compute_instance_v2.app[0].id
+}
+
+output "instance_ip" {
+  description = "App instance IP"
   value       = openstack_networking_floatingip_v2.app[0].address
 }
 

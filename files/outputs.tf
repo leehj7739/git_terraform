@@ -1,11 +1,11 @@
 output "app_instance_ids" {
-  description = "생성된 앱 인스턴스의 ID 목록"
-  value       = module.app_server.instance_ids
+  description = "App instance IDs"
+  value       = module.app_server.instance_id
 }
 
 output "app_instance_ips" {
-  description = "생성된 앱 인스턴스의 IP 주소 목록"
-  value       = module.app_server.instance_ips
+  description = "App instance IPs"
+  value       = module.app_server.instance_ip
 }
 
 output "security_group_id" {
