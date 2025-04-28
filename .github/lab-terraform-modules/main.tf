@@ -112,6 +112,7 @@ resource "openstack_lb_loadbalancer_v2" "lb" {
   name          = "fastapi-lb"
   vip_subnet_id = var.subnet_id
   vip_address   = "192.168.0.100"  # 원하는 내부 IP 주소
+  security_group_ids = [openstack_networking_secgroup_v2.web.id]  # 기존 보안 그룹 연결
 }
 
 # 리스너 생성
@@ -128,4 +129,13 @@ resource "openstack_lb_pool_v2" "blue_pool" {
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
   listener_id = openstack_lb_listener_v2.blue_listener.id
+}
+
+# 멤버 추가 (인스턴스들을 로드밸런서에 연결)
+resource "openstack_lb_member_v2" "blue_members" {
+  count         = var.create_instance ? 2 : 0
+  pool_id       = openstack_lb_pool_v2.blue_pool.id
+  address       = module.web_server[count.index].instance_ip
+  protocol_port = 80
+  subnet_id     = var.subnet_id
 }
