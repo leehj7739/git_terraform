@@ -43,3 +43,13 @@ output "instance_ips" {
   value       = var.create_instance ? [for server in module.web_server : server.instance_addresses[0].fixed_ip_v4] : []
 }
 
+output "loadbalancer_vip" {
+  description = "The VIP address of the load balancer"
+  value       = openstack_lb_loadbalancer_v2.lb.vip_address
+}
+
+output "loadbalancer_id" {
+  description = "The ID of the load balancer"
+  value       = openstack_lb_loadbalancer_v2.lb.id
+}
+
