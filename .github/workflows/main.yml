@@ -112,6 +112,12 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd .github/lab-terraform-modules
+          export OS_USERNAME="${{ env.TF_VAR_username }}"
+          export OS_PASSWORD="${{ env.TF_VAR_password }}"
+          export OS_TENANT_NAME="${{ env.TF_VAR_tenant_name }}"
+          export OS_AUTH_URL="https://iam.kakaocloud.com/identity/v3"
+          export OS_REGION_NAME="${{ env.TF_VAR_region }}"
+          export OS_DOMAIN_NAME="kc-kdt-sfacspace2025"
           terraform apply -auto-approve -input=false
 
       - name: Get Instance IP
