@@ -7,15 +7,14 @@ on:
     branches: [ main ]
 
 env:
-  TF_VAR_PASSWORD: ${{ secrets.OPENSTACK_PASSWORD }}
-  TF_VAR_TENANT_NAME: ${{ secrets.OPENSTACK_TENANT_NAME }}
-  TF_VAR_USERNAME: ${{ secrets.OPENSTACK_USERNAME }}
+  TF_VAR_PASSWORD: ${{ secrets.TF_VAR_PASSWORD }}
+  TF_VAR_TENANT_NAME: ${{ secrets.TF_VAR_TENANT_NAME }}
+  TF_VAR_USERNAME: ${{ secrets.TF_VAR_USERNAME }}
 
 jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,15 +24,29 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+        working-directory: .github/lab-terraform-modules
+        continue-on-error: true
+
       - name: Terraform Init
+        id: init
         run: |
           cd .github/lab-terraform-modules
           terraform init
 
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+        working-directory: .github/lab-terraform-modules
+
       - name: Terraform Plan
+        id: plan
         run: |
           cd .github/lab-terraform-modules
-          terraform plan
+          terraform plan -no-color
+        continue-on-error: true
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
@@ -42,44 +55,34 @@ jobs:
           terraform apply -auto-approve
 
       - name: Get Instance IP
+        if: github.ref == 'refs/heads/main'
         run: |
           cd .github/lab-terraform-modules
           INSTANCE_IP=$(terraform output -raw instance_ip)
           echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
       - name: Check FastAPI Server
+        if: github.ref == 'refs/heads/main'
         run: |
           echo "Waiting for FastAPI server to start..."
           sleep 60
           curl -f http://${{ env.INSTANCE_IP }}/hello || exit 1
 
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt -check
-        working-directory: .github/lab-terraform-modules
-        continue-on-error: true
-
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate
-        working-directory: .github/lab-terraform-modules
-
       - name: Update Pull Request
-        uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
         env:
           PLAN: "${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`terraform\n
+            \`\`\`terraform
             ${process.env.PLAN}
             \`\`\`
 
