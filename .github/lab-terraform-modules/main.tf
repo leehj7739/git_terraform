@@ -84,6 +84,7 @@ module "web_server" {
 }
 
 
+/*
 # 로드밸런서 생성
 resource "openstack_lb_loadbalancer_v2" "lb" {
   name          = "lkz-lb"
@@ -115,3 +116,5 @@ resource "openstack_lb_member_v2" "blue_members" {
   protocol_port = 80
   subnet_id     = var.subnet_id
 }
+
+*/
