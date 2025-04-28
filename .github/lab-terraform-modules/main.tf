@@ -14,8 +14,6 @@ provider "openstack" {
   password          = var.password
   tenant_name       = var.tenant_name
   domain_name       = "kc-kdt-sfacspace2025"
-  user_domain_name  = "kc-kdt-sfacspace2025"
-  project_domain_name = "kc-kdt-sfacspace2025"
 }
 
 # 디버깅을 위한 출력
