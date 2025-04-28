@@ -57,7 +57,7 @@ resource "openstack_compute_instance_v2" "web" {
   image_id        = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
   flavor_name     = var.flavor_name
   key_pair        = var.key_name
-  security_groups = [openstack_networking_secgroup_v2.web.id]
+  security_groups = [openstack_networking_secgroup_v2.web.name]
 
   network {
     name = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
@@ -98,12 +98,11 @@ resource "openstack_objectstorage_container_v1" "storage" {
 } 
 
 
-module "app_server" {
+module "web_server" {
   source = "./modules/compute"
-  for_each = toset(["app-1","app-2"])
 
   create_instance   = var.create_instance
-  instance_name     = "${var.dev_name}-${each.value}-server"
+  instance_name     = "${var.dev_name}-web-server"
   image_id          = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
   flavor_name       = var.flavor_name
   key_name          = var.key_name
