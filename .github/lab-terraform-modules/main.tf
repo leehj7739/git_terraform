@@ -55,6 +55,7 @@ module "web_server" {
   source = "./modules/compute"
 
   create_instance   = var.create_instance
+  count         = var.web_server_count
   instance_name    = "${var.dev_name}-web-server-${count.index + 1}"
   image_id         = local.image_id
   flavor_name       = var.flavor_name
