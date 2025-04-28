@@ -67,7 +67,7 @@ resource "openstack_compute_instance_v2" "web" {
   network {
     name = var.network_name
   }
-  
+
   block_device {
     uuid                  = var.image_id
     source_type           = "image"
