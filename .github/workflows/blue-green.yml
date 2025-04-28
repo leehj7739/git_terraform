@@ -1,0 +1,102 @@
+name: Blue-Green Deployment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy (blue/green)'
+        required: true
+        default: 'blue'
+        type: choice
+        options:
+          - blue
+          - green
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
+      - name: Terraform Init
+        working-directory: ./files
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./files
+        run: |
+          terraform plan \
+            -var="environment=${{ github.event.inputs.environment || 'blue' }}" \
+            -var="username=${{ secrets.TF_VAR_username }}" \
+            -var="password=${{ secrets.TF_VAR_password }}" \
+            -var="tenant_name=${{ secrets.TF_VAR_tenant_name }}" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./files
+        run: |
+          terraform apply \
+            -var="environment=${{ github.event.inputs.environment || 'blue' }}" \
+            -var="username=${{ secrets.TF_VAR_username }}" \
+            -var="password=${{ secrets.TF_VAR_password }}" \
+            -var="tenant_name=${{ secrets.TF_VAR_tenant_name }}" \
+            -auto-approve
+
+      - name: Health Check
+        working-directory: ./files
+        run: |
+          # Get all instance IPs
+          IPS=$(terraform output -json all_app_ips | jq -r '.[]')
+          
+          # Check each instance
+          for IP in $IPS; do
+            echo "Checking instance at $IP..."
+            RETRY_COUNT=0
+            MAX_RETRIES=30
+            
+            until curl -f http://$IP:8000/health || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
+              echo "Waiting for application to be ready... (Attempt: $RETRY_COUNT/$MAX_RETRIES)"
+              sleep 10
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+            done
+            
+            if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+              echo "Health check failed for instance at $IP after $MAX_RETRIES attempts"
+              exit 1
+            fi
+            
+            # Check the /hello endpoint
+            DEPLOY_TIME=$(curl -s http://$IP:8000/hello | jq -r '.deployed_at')
+            echo "Instance at $IP deployed at: $DEPLOY_TIME"
+          done
+
+      - name: Switch Traffic
+        if: github.event.inputs.environment == 'green'
+        working-directory: ./files
+        run: |
+          # Get all new instance IPs
+          NEW_IPS=$(terraform output -json all_app_ips | jq -r '.[]')
+          echo "New environment IPs: $NEW_IPS"
+          # Here you would update your load balancer or DNS
+          # For now, we just print the IPs
+          echo "Traffic should be switched to these IPs"
+
+      - name: Cleanup Old Environment
+        if: github.event.inputs.environment == 'green'
+        working-directory: ./files
+        run: |
+          # Clean up the old (blue) environment
+          terraform destroy \
+            -var="environment=blue" \
+            -var="username=${{ secrets.TF_VAR_username }}" \
+            -var="password=${{ secrets.TF_VAR_password }}" \
+            -var="tenant_name=${{ secrets.TF_VAR_tenant_name }}" \
+            -auto-approve 
