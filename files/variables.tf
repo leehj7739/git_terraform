@@ -110,4 +110,16 @@ variable "dev_name" {
 variable "environment" {
   description = "Environment name (blue/green)"
   type        = string
+}
+
+variable "floating_ip_pool" {
+  description = "Floating IP pool name"
+  type        = string
+  default     = "public"
+}
+
+variable "security_group_name" {
+  description = "Security group name for app instances"
+  type        = string
+  default     = "default"
 } 

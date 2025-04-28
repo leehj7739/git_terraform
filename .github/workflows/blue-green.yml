@@ -8,7 +8,7 @@ on:
       environment:
         description: 'Environment to deploy (blue/green)'
         required: true
-        default: 'blue'
+        default: 'green'
         type: choice
         options:
           - blue
