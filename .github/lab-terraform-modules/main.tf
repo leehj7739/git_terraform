@@ -13,12 +13,12 @@ provider "openstack" {
   user_name      = var.username
   password       = var.password
   tenant_name    = var.tenant_name
-  domain_name    = "Default"
+  domain_name    = "kc-kdt-sfacspace2025"
   endpoint_type  = "public"
   allow_reauth   = true
   insecure       = true
-  user_domain_name = "Default"
-  project_domain_name = "Default"
+  user_domain_name = "kc-kdt-sfacspace2025"
+  project_domain_name = "kc-kdt-sfacspace2025"
 }
 
 # 디버깅을 위한 출력
@@ -32,7 +32,7 @@ output "region" {
 }
 
 output "domain_name" {
-  value = "Default"
+  value = "kc-kdt-sfacspace2025"
 }
 
 # 인스턴스 설정
