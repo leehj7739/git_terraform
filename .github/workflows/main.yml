@@ -73,17 +73,39 @@ jobs:
         id: init
         run: |
           cd .github/lab-terraform-modules
+          export OS_USERNAME="${{ env.TF_VAR_username }}"
+          export OS_PASSWORD="${{ env.TF_VAR_password }}"
+          export OS_TENANT_NAME="${{ env.TF_VAR_tenant_name }}"
+          export OS_AUTH_URL="https://iam.kakaocloud.com/identity/v3"
+          export OS_REGION_NAME="${{ env.TF_VAR_region }}"
+          export OS_USER_DOMAIN_NAME="kc-kdt-sfacspace2025"
+          export OS_PROJECT_DOMAIN_NAME="kc-kdt-sfacspace2025"
           terraform init -input=false
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate
-        working-directory: .github/lab-terraform-modules
+        run: |
+          cd .github/lab-terraform-modules
+          export OS_USERNAME="${{ env.TF_VAR_username }}"
+          export OS_PASSWORD="${{ env.TF_VAR_password }}"
+          export OS_TENANT_NAME="${{ env.TF_VAR_tenant_name }}"
+          export OS_AUTH_URL="https://iam.kakaocloud.com/identity/v3"
+          export OS_REGION_NAME="${{ env.TF_VAR_region }}"
+          export OS_USER_DOMAIN_NAME="kc-kdt-sfacspace2025"
+          export OS_PROJECT_DOMAIN_NAME="kc-kdt-sfacspace2025"
+          terraform validate
 
       - name: Terraform Plan
         id: plan
         run: |
           cd .github/lab-terraform-modules
+          export OS_USERNAME="${{ env.TF_VAR_username }}"
+          export OS_PASSWORD="${{ env.TF_VAR_password }}"
+          export OS_TENANT_NAME="${{ env.TF_VAR_tenant_name }}"
+          export OS_AUTH_URL="https://iam.kakaocloud.com/identity/v3"
+          export OS_REGION_NAME="${{ env.TF_VAR_region }}"
+          export OS_USER_DOMAIN_NAME="kc-kdt-sfacspace2025"
+          export OS_PROJECT_DOMAIN_NAME="kc-kdt-sfacspace2025"
           terraform plan -no-color -input=false
         continue-on-error: true
 
@@ -96,6 +118,13 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd .github/lab-terraform-modules
+          export OS_USERNAME="${{ env.TF_VAR_username }}"
+          export OS_PASSWORD="${{ env.TF_VAR_password }}"
+          export OS_TENANT_NAME="${{ env.TF_VAR_tenant_name }}"
+          export OS_AUTH_URL="https://iam.kakaocloud.com/identity/v3"
+          export OS_REGION_NAME="${{ env.TF_VAR_region }}"
+          export OS_USER_DOMAIN_NAME="kc-kdt-sfacspace2025"
+          export OS_PROJECT_DOMAIN_NAME="kc-kdt-sfacspace2025"
           terraform apply -auto-approve -input=false
 
       - name: Get Instance IP
