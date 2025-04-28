@@ -29,6 +29,8 @@ jobs:
           echo "TF_VAR_username: ${{ env.TF_VAR_username }}"
           echo "TF_VAR_tenant_name: ${{ env.TF_VAR_tenant_name }}"
           echo "TF_VAR_password: ${{ env.TF_VAR_password != '' }}"
+          echo "Region: kr-central-2"
+          echo "Domain: kc-kdt-sfacspace2025"
 
       - name: Terraform Format
         id: fmt
@@ -53,6 +55,11 @@ jobs:
           cd .github/lab-terraform-modules
           terraform plan -no-color
         continue-on-error: true
+
+      - name: Debug Outputs
+        run: |
+          cd .github/lab-terraform-modules
+          terraform output
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'

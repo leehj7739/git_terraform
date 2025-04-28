@@ -17,6 +17,20 @@ provider "openstack" {
   insecure    = true
 }
 
+# 디버깅을 위한 출력
+output "auth_url" {
+  value = "https://iam.kakaocloud.com/identity/v3"
+  sensitive = true
+}
+
+output "region" {
+  value = var.region
+}
+
+output "domain_name" {
+  value = "kc-kdt-sfacspace2025"
+}
+
 # Ubuntu 이미지 찾기
 data "openstack_images_image_v2" "ubuntu" {
   name        = var.image_name
