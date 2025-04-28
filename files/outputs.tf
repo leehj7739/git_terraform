@@ -13,21 +13,6 @@ output "security_group_id" {
   value       = openstack_networking_secgroup_v2.web.id
 }
 
-output "instance_id" {
-  description = "생성된 인스턴스의 ID"
-  value       = var.create_instance ? openstack_compute_instance_v2.web[0].id : null
-}
-
-output "instance_name" {
-  description = "생성된 인스턴스의 이름"
-  value       = var.create_instance ? openstack_compute_instance_v2.web[0].name : null
-}
-
-output "instance_addresses" {
-  description = "생성된 인스턴스의 네트워크 주소"
-  value       = var.create_instance ? openstack_compute_instance_v2.web[0].network : null
-}
-
 output "data_volume_id" {
   description = "생성된 데이터 볼륨의 ID"
   value       = var.create_data_volume ? openstack_blockstorage_volume_v3.data[0].id : null
