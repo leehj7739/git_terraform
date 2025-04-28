@@ -35,11 +35,11 @@ output "lb_vip" {
 
 output "instance_ip" {
   description = "인스턴스의 IP 주소"
-  value       = var.create_instance ? module.web_server[0].instance_addresses["private"] : null
+  value       = var.create_instance ? module.web_server[0].instance_addresses[0].fixed_ip_v4 : null
 }
 
 output "instance_ips" {
   description = "모든 인스턴스의 IP 주소"
-  value       = var.create_instance ? module.web_server[*].instance_addresses["private"] : []
+  value       = var.create_instance ? [for server in module.web_server : server.instance_addresses[0].fixed_ip_v4] : []
 }
 

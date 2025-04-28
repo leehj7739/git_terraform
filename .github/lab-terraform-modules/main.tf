@@ -150,7 +150,7 @@ resource "openstack_lb_pool_v2" "blue_pool" {
 resource "openstack_lb_member_v2" "blue_members" {
   count         = var.create_instance ? 2 : 0
   pool_id       = openstack_lb_pool_v2.blue_pool.id
-  address       = module.web_server[count.index].instance_addresses["private"]
+  address       = module.web_server[count.index].instance_addresses[0].fixed_ip_v4
   protocol_port = 80
   subnet_id     = var.subnet_id
 }
