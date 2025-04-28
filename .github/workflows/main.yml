@@ -44,11 +44,6 @@ jobs:
         run: |
           cd .github/lab-terraform-modules
           terraform init
-        env:
-          TF_VAR_username: ${{ secrets.OS_USERNAME }}
-          TF_VAR_password: ${{ secrets.OS_PASSWORD }}
-          TF_VAR_tenant_name: ${{ secrets.OS_TENANT_NAME }}
-          TF_VAR_region: ${{ env.TF_VAR_region }}
 
       - name: Terraform Validate
         id: validate
@@ -60,11 +55,6 @@ jobs:
         run: |
           cd .github/lab-terraform-modules
           terraform plan -no-color
-        env:
-          TF_VAR_username: ${{ secrets.OS_USERNAME }}
-          TF_VAR_password: ${{ secrets.OS_PASSWORD }}
-          TF_VAR_tenant_name: ${{ secrets.OS_TENANT_NAME }}
-          TF_VAR_region: ${{ env.TF_VAR_region }}
         continue-on-error: true
 
       - name: Debug Outputs
@@ -77,11 +67,6 @@ jobs:
         run: |
           cd .github/lab-terraform-modules
           terraform apply -auto-approve
-        env:
-          TF_VAR_username: ${{ secrets.OS_USERNAME }}
-          TF_VAR_password: ${{ secrets.OS_PASSWORD }}
-          TF_VAR_tenant_name: ${{ secrets.OS_TENANT_NAME }}
-          TF_VAR_region: ${{ env.TF_VAR_region }}
 
       - name: Get Instance IP
         if: github.ref == 'refs/heads/main'
