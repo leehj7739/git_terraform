@@ -93,9 +93,9 @@ resource "openstack_blockstorage_volume_v3" "data" {
 
 # EBS 볼륨 연결 (선택적)
 resource "openstack_compute_volume_attach_v2" "data_attach" {
-  count = var.create_instance && var.create_data_volume ? 1 : 0
+  count = var.create_instance && var.create_data_volume ? 2 : 0
 
-  instance_id = module.web_server.instance_id
+  instance_id = module.web_server[count.index].instance_id
   volume_id   = openstack_blockstorage_volume_v3.data[0].id
 }
 
