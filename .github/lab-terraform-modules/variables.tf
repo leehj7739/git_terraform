@@ -82,18 +82,6 @@ variable "data_volume_size" {
   default     = 50
 }
 
-# 오브젝트 스토리지 관련 변수
-variable "create_s3_bucket" {
-  description = "오브젝트 스토리지 컨테이너 생성 여부"
-  type        = bool
-  default     = false
-}
-
-variable "s3_bucket_suffix" {
-  description = "오브젝트 스토리지 컨테이너 이름 접미사 (globally unique 해야 함)"
-  type        = string
-  default     = "unique-suffix"
-}
 
 variable "subnet_id" {
   description = "서브넷 ID (VPC 내의 실제 네트워크)"
@@ -106,3 +94,9 @@ variable "dev_name" {
   type        = string
   default     = ""
 } 
+
+variable "web_server_count" {
+  description = "Number of web server instances to create"
+  type        = number
+  default     = 1
+}
