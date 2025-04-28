@@ -98,5 +98,5 @@ variable "dev_name" {
 variable "web_server_count" {
   description = "Number of web server instances to create"
   type        = number
-  default     = 1
+  default     = 2
 }
