@@ -29,6 +29,7 @@ variable "project_name" {
 variable "network_name" {
   description = "네트워크 이름"
   type        = string
+  default     = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
 }
 
 # 인스턴스 관련 변수
