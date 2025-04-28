@@ -55,8 +55,6 @@ resource "openstack_networking_secgroup_rule_v2" "web_http" {
   security_group_id = openstack_networking_secgroup_v2.web.id
 }
 
-
-
 # 라우터 생성
 resource "openstack_networking_router_v2" "router" {
   name                = "${var.project_name}-router"
@@ -106,8 +104,8 @@ resource "openstack_compute_interface_attach_v2" "instance_interface" {
 module "app_server" {
   source = "./modules/app"
 
-  environment          = var.environment
-  instance_count       = var.instance_count
+  environment         = var.environment
+  instance_count      = var.instance_count
   image_id            = var.image_id
   flavor_name         = var.flavor_name
   key_name            = var.key_name
