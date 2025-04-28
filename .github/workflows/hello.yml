@@ -1,4 +1,4 @@
-name: Hello Actions
+name: Terraform Actions
 
 on:
   push:
@@ -7,10 +7,30 @@ on:
     branches: [ main ]
 
 jobs:
-  greet:
+  terraform:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Say hello
-        run: echo "Hello, Actions!"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
+      - name: Terraform Init
+        run: terraform init
+        env:
+          TF_VAR_username: ${{ secrets.TF_VAR_username }}
+          TF_VAR_password: ${{ secrets.TF_VAR_password }}
+          TF_VAR_tenant_name: ${{ secrets.TF_VAR_tenant_name }}
+
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        run: terraform validate
+        env:
+          TF_VAR_username: ${{ secrets.TF_VAR_username }}
+          TF_VAR_password: ${{ secrets.TF_VAR_password }}
+          TF_VAR_tenant_name: ${{ secrets.TF_VAR_tenant_name }}
