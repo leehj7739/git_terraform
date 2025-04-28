@@ -16,7 +16,6 @@ provider "openstack" {
   domain_name    = "kc-kdt-sfacspace2025"
   endpoint_type  = "public"
   allow_reauth   = true
-  use_octavia    = true
   insecure       = true
   user_domain_name = "Default"
   project_domain_name = "Default"
