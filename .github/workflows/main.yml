@@ -44,19 +44,23 @@ jobs:
     - name: Terraform Format
       id: fmt
       run: terraform fmt -check
+      working-directory: .github/lab-terraform-modules
       continue-on-error: true
 
     - name: Terraform Init
       id: init
       run: terraform init
+      working-directory: .github/lab-terraform-modules
 
     - name: Terraform Validate
       id: validate
       run: terraform validate
+      working-directory: .github/lab-terraform-modules
 
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color
+      working-directory: .github/lab-terraform-modules
       continue-on-error: true
 
     - name: Update Pull Request
