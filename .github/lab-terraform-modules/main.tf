@@ -12,7 +12,7 @@ provider "openstack" {
   region      = var.region
   user_name   = var.username
   password    = var.password
-  tenant_name = var.tenant_name  # OpenStack 프로젝트 이름
+  tenant_name = var.tenant_name # OpenStack 프로젝트 이름
   domain_name = "kc-kdt-sfacspace2025"
 }
 
@@ -109,7 +109,7 @@ resource "openstack_compute_instance_v2" "web" {
   network {
     name = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
   }
-  
+
   block_device {
     uuid                  = var.image_id
     source_type           = "image"
@@ -151,24 +151,24 @@ resource "openstack_networking_floatingip_v2" "fip" {
 }
 
 # Floating IP를 인스턴스에 연결
-resource "openstack_compute_floatingip_associate_v2" "fip_associate" {
+resource "openstack_networking_floatingip_associate_v2" "fip_associate" {
   count       = var.create_instance ? 1 : 0
   floating_ip = openstack_networking_floatingip_v2.fip[0].address
-  instance_id = openstack_compute_instance_v2.web[0].id
+  port_id     = module.web_server.instance_port_id
 }
 
 module "web_server" {
   source = "./modules/compute"
 
-  create_instance   = var.create_instance
-  instance_name     = "${var.dev_name}-web-server"
-  image_id          = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
-  flavor_name       = var.flavor_name
-  key_name          = var.key_name
-  security_groups   = [openstack_networking_secgroup_v2.web.id]
-  network_name      = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
-  root_volume_size  = var.root_volume_size
-  user_data         = <<-EOF
+  create_instance  = var.create_instance
+  instance_name    = "${var.dev_name}-web-server"
+  image_id         = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
+  flavor_name      = var.flavor_name
+  key_name         = var.key_name
+  security_groups  = [openstack_networking_secgroup_v2.web.id]
+  network_name     = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
+  root_volume_size = var.root_volume_size
+  user_data        = <<-EOF
     #cloud-config
     write_files:
       - path: /root/app/main.py
