@@ -63,6 +63,11 @@ jobs:
       working-directory: .github/lab-terraform-modules
       continue-on-error: true
 
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve
+      working-directory: .github/lab-terraform-modules
+
     - name: Update Pull Request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
