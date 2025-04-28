@@ -36,6 +36,33 @@ jobs:
           echo "Auth URL: https://iam.kakaocloud.com/identity/v3"
           echo "========================="
 
+      - name: Test OpenStack Authentication
+        run: |
+          echo "=== Testing OpenStack Authentication ==="
+          curl -v -X POST https://iam.kakaocloud.com/identity/v3/auth/tokens \
+            -H "Content-Type: application/json" \
+            -d '{
+              "auth": {
+                "identity": {
+                  "methods": ["password"],
+                  "password": {
+                    "user": {
+                      "name": "'"${{ env.TF_VAR_username }}"'",
+                      "password": "'"${{ env.TF_VAR_password }}"'",
+                      "domain": { "name": "kc-kdt-sfacspace2025" }
+                    }
+                  }
+                },
+                "scope": {
+                  "project": {
+                    "name": "'"${{ env.TF_VAR_tenant_name }}"'",
+                    "domain": { "name": "kc-kdt-sfacspace2025" }
+                  }
+                }
+              }
+            }'
+          echo "======================================="
+
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
