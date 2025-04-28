@@ -2,7 +2,7 @@ terraform {
   required_providers {
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = ">= 1.49.0"
+      version = "1.49.0"
     }
   }
 }
@@ -41,4 +41,4 @@ resource "openstack_compute_floatingip_associate_v2" "app" {
   count       = var.instance_count
   floating_ip = openstack_networking_floatingip_v2.app[count.index].address
   instance_id = openstack_compute_instance_v2.app[count.index].id
-} 
+}
