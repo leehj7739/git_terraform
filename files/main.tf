@@ -111,7 +111,7 @@ module "app_server" {
   flavor_name        = var.flavor_name
   key_name           = var.key_name
   network_name       = var.network_name
-  floating_ip_pool   = "ext-net"  # 변경된 Floating IP 풀 이름
+  floating_ip_pool   = var.floating_ip_pool
   security_group_name = openstack_networking_secgroup_v2.web.name
   app_repository     = "https://github.com/yourusername/your-fastapi-app.git"
 }

@@ -29,7 +29,7 @@ variable "project_name" {
 variable "network_name" {
   description = "사용할 네트워크 이름"
   type        = string
-  default     = "main"
+  default     = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
 }
 
 # 인스턴스 관련 변수
@@ -115,7 +115,7 @@ variable "environment" {
 variable "floating_ip_pool" {
   description = "Floating IP pool name"
   type        = string
-  default     = "public"
+  default     = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
 }
 
 variable "security_group_name" {
