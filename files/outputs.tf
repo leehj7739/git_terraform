@@ -1,3 +1,13 @@
+output "app_instance_ids" {
+  description = "생성된 앱 인스턴스의 ID 목록"
+  value       = module.app_server.instance_ids
+}
+
+output "app_instance_ips" {
+  description = "생성된 앱 인스턴스의 IP 주소 목록"
+  value       = module.app_server.instance_ips
+}
+
 output "security_group_id" {
   description = "생성된 보안 그룹의 ID"
   value       = openstack_networking_secgroup_v2.web.id
