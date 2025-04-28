@@ -107,4 +107,20 @@ variable "app_repository" {
 variable "floating_ip_pool" {
   description = "Floating IP pool name"
   type        = string
+}
+
+variable "external_network_id" {
+  description = "외부 네트워크 ID"
+  type        = string
+}
+
+variable "network_id" {
+  description = "내부 네트워크 ID"
+  type        = string
+}
+
+variable "subnet_cidr" {
+  description = "서브넷 CIDR"
+  type        = string
+  default     = "192.168.1.0/24"
 } 

@@ -13,7 +13,7 @@ provider "openstack" {
   user_name   = var.username
   password    = var.password
   tenant_name = var.tenant_name
-  domain_name = "kc-kdt-sfacspace2025"
+  domain_name = var.domain_name
 }
 
 # Ubuntu 이미지 찾기
@@ -113,4 +113,55 @@ module "app_server" {
   network_name       = var.network_name
   security_group_name = openstack_networking_secgroup_v2.web.name
   app_repository     = "https://github.com/yourusername/your-fastapi-app.git"
+}
+
+variable "domain_name" {
+  description = "OpenStack 도메인 이름"
+  type        = string
+  default     = "kc-kdt-sfacspace2025"
+}
+
+# 라우터 생성
+resource "openstack_networking_router_v2" "router" {
+  name                = "${var.dev_name}-router"
+  admin_state_up      = true
+  external_network_id = var.external_network_id
+}
+
+# 서브넷 생성
+resource "openstack_networking_subnet_v2" "subnet" {
+  name            = "${var.dev_name}-subnet"
+  network_id      = var.network_id
+  cidr            = var.subnet_cidr
+  ip_version      = 4
+  dns_nameservers = ["8.8.8.8", "8.8.4.4"]
+}
+
+# 라우터 인터페이스 연결
+resource "openstack_networking_router_interface_v2" "router_interface" {
+  router_id = openstack_networking_router_v2.router.id
+  subnet_id = openstack_networking_subnet_v2.subnet.id
+}
+
+# 포트 생성 및 인스턴스 연결
+resource "openstack_networking_port_v2" "instance_port" {
+  count = var.create_instance ? 1 : 0
+
+  name           = "${var.dev_name}-instance-port"
+  network_id     = var.network_id
+  admin_state_up = true
+
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.subnet.id
+  }
+
+  security_group_ids = [openstack_networking_secgroup_v2.web.id]
+}
+
+# 인스턴스에 포트 연결
+resource "openstack_compute_interface_attach_v2" "instance_interface" {
+  count = var.create_instance ? 1 : 0
+
+  instance_id = openstack_compute_instance_v2.web[0].id
+  port_id     = openstack_networking_port_v2.instance_port[0].id
 }

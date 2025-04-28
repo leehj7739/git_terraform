@@ -4,6 +4,9 @@ dev_name = "lkz"
 
 # 네트워크 설정
 network_name = "sfacspace-default"
+network_id = "your-network-id"  # 실제 네트워크 ID로 교체
+external_network_id = "your-external-network-id"  # 실제 외부 네트워크 ID로 교체
+subnet_cidr = "192.168.1.0/24"
 floating_ip_pool = "public"
 
 # 인스턴스 설정
