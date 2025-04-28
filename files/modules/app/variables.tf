@@ -25,12 +25,12 @@ variable "key_name" {
 }
 
 variable "security_group_name" {
-  description = "Security group name"
+  description = "보안 그룹 이름"
   type        = string
 }
 
 variable "network_name" {
-  description = "Network name"
+  description = "네트워크 이름"
   type        = string
   default     = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
 }
@@ -41,6 +41,6 @@ variable "floating_ip_pool" {
 }
 
 variable "app_repository" {
-  description = "Git repository URL for the FastAPI application"
+  description = "애플리케이션 저장소 URL"
   type        = string
 } 

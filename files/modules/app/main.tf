@@ -31,14 +31,3 @@ resource "openstack_compute_instance_v2" "app" {
     uvicorn main:app --host 0.0.0.0 --port 8000
   EOF
 }
-
-resource "openstack_networking_floatingip_v2" "app" {
-  count = var.instance_count
-  pool  = var.floating_ip_pool
-}
-
-resource "openstack_compute_floatingip_associate_v2" "app" {
-  count       = var.instance_count
-  floating_ip = openstack_networking_floatingip_v2.app[count.index].address
-  instance_id = openstack_compute_instance_v2.app[count.index].id
-}

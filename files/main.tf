@@ -64,8 +64,8 @@ resource "openstack_compute_instance_v2" "web" {
   key_pair        = var.key_name
   security_groups = [openstack_networking_secgroup_v2.web.name]
 
-  network {
-    uuid = var.network_name
+ network {
+    name = var.network_name
   }
   
   block_device {
@@ -111,7 +111,6 @@ module "app_server" {
   flavor_name        = var.flavor_name
   key_name           = var.key_name
   network_name       = var.network_name
-  floating_ip_pool   = var.floating_ip_pool
   security_group_name = openstack_networking_secgroup_v2.web.name
   app_repository     = "https://github.com/yourusername/your-fastapi-app.git"
 }
