@@ -8,15 +8,18 @@ terraform {
 }
 
 provider "openstack" {
-  auth_url    = "https://iam.kakaocloud.com/identity/v3"
-  region      = var.region
-  user_name   = var.username
-  password    = var.password
-  tenant_name = var.tenant_name
-  domain_name = "kc-kdt-sfacspace2025"
-  insecure    = true
-  endpoint_type = "public"
-  allow_reauth = true
+  auth_url       = "https://iam.kakaocloud.com/identity/v3"
+  region         = var.region
+  user_name      = var.username
+  password       = var.password
+  tenant_name    = var.tenant_name
+  domain_name    = "kc-kdt-sfacspace2025"
+  endpoint_type  = "public"
+  allow_reauth   = true
+  use_octavia    = true
+  insecure       = true
+  user_domain_name = "Default"
+  project_domain_name = "Default"
 }
 
 # 디버깅을 위한 출력
