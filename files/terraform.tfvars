@@ -20,3 +20,4 @@ data_volume_size   = 50
 # 오브젝트 스토리지 설정
 create_s3_bucket   = false
 s3_bucket_suffix   = "unique-suffix-12345" 
+
