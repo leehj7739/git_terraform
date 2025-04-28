@@ -124,15 +124,17 @@ resource "openstack_objectstorage_container_v1" "storage" {
   name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
 }
 
-# 로드밸런서 생성 대신 기존 로드밸런서 사용
-data "openstack_lb_loadbalancer_v2" "existing_lb" {
-  name = "lkz-lb"  # 기존 로드밸런서 이름
+# 로드밸런서 생성
+resource "openstack_lb_loadbalancer_v2" "lb" {
+  name          = "lkz-lb"
+  vip_subnet_id = var.subnet_id
+  security_group_ids = [openstack_networking_secgroup_v2.web.id]
 }
 
 # 리스너 생성
 resource "openstack_lb_listener_v2" "blue_listener" {
   name            = "${var.dev_name}-blue-listener"
-  loadbalancer_id = data.openstack_lb_loadbalancer_v2.existing_lb.id
+  loadbalancer_id = openstack_lb_loadbalancer_v2.lb.id
   protocol        = "HTTP"
   protocol_port   = 80
 }
