@@ -82,7 +82,6 @@ variable "data_volume_size" {
   default     = 50
 }
 
-
 variable "subnet_id" {
   description = "서브넷 ID (VPC 내의 실제 네트워크)"
   type        = string
@@ -93,7 +92,7 @@ variable "dev_name" {
   description = "개발자 이름 (리소스 이름 접두어로 사용)"
   type        = string
   default     = ""
-} 
+}
 
 variable "web_server_count" {
   description = "Number of web server instances to create"
