@@ -15,6 +15,8 @@ provider "openstack" {
   tenant_name = var.tenant_name
   domain_name = "kc-kdt-sfacspace2025"
   insecure    = true
+  endpoint_type = "public"
+  allow_reauth = true
 }
 
 # 디버깅을 위한 출력
@@ -31,10 +33,9 @@ output "domain_name" {
   value = "kc-kdt-sfacspace2025"
 }
 
-# Ubuntu 이미지 찾기
-data "openstack_images_image_v2" "ubuntu" {
-  name        = var.image_name
-  most_recent = true
+# 인스턴스 설정
+locals {
+  image_id = var.image_id != "" ? var.image_id : "6f8f7e1c-b801-46c6-940c-603ffc05247a"
 }
 
 # 네트워크 보안 그룹 생성
@@ -57,11 +58,11 @@ resource "openstack_networking_secgroup_rule_v2" "web_ssh" {
 # HTTP 규칙
 resource "openstack_networking_secgroup_rule_v2" "web_http" {
   direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 80
-  port_range_max    = 80
-  remote_ip_prefix  = "0.0.0.0/0"
+  ethertype        = "IPv4"
+  protocol         = "tcp"
+  port_range_min   = 80
+  port_range_max   = 80
+  remote_ip_prefix = "0.0.0.0/0"
   security_group_id = openstack_networking_secgroup_v2.web.id
 }
 
@@ -71,7 +72,7 @@ module "web_server" {
   count            = var.create_instance ? 2 : 0
   create_instance  = var.create_instance
   instance_name    = "${var.dev_name}-web-server-${count.index + 1}"
-  image_id         = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
+  image_id         = local.image_id
   flavor_name      = var.flavor_name
   key_name         = var.key_name
   security_groups  = [openstack_networking_secgroup_v2.web.id]
