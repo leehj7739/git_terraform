@@ -155,9 +155,3 @@ resource "openstack_lb_member_v2" "blue_members" {
   protocol_port = 80
   subnet_id     = var.subnet_id
 }
-
-# 로드밸런서 퍼블릭 IP 출력
-output "loadbalancer_public_ip" {
-  description = "로드밸런서의 퍼블릭 IP 주소"
-  value       = "210.109.82.75"
-}
