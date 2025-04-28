@@ -2,7 +2,7 @@ terraform {
   required_providers {
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = ">= 1.49.0"
+      version = "1.49.0"
     }
   }
 }
@@ -12,7 +12,7 @@ provider "openstack" {
   region      = var.region
   user_name   = var.username
   password    = var.password
-  tenant_name = var.tenant_name  # OpenStack 프로젝트 이름
+  tenant_name = var.tenant_name
   domain_name = "kc-kdt-sfacspace2025"
 }
 
@@ -24,8 +24,13 @@ data "openstack_images_image_v2" "ubuntu" {
 
 # 네트워크 보안 그룹 생성
 resource "openstack_networking_secgroup_v2" "web" {
-  name        = "${var.dev_name}-web-sg"
+  name        = "${var.dev_name}-web-sg-${random_id.sg_suffix.hex}"
   description = "Security group for web servers"
+}
+
+# 보안 그룹 이름 충돌 방지를 위한 랜덤 접미사
+resource "random_id" "sg_suffix" {
+  byte_length = 4
 }
 
 # SSH 규칙
@@ -60,7 +65,7 @@ resource "openstack_compute_instance_v2" "web" {
   security_groups = [openstack_networking_secgroup_v2.web.name]
 
   network {
-    name = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
+    name = var.network_name
   }
   
   block_device {
@@ -106,7 +111,7 @@ module "app_server" {
   flavor_name        = var.flavor_name
   key_name           = var.key_name
   network_name       = var.network_name
-  floating_ip_pool   = var.floating_ip_pool
-  security_group_name = var.security_group_name
+  floating_ip_pool   = "ext-net"  # 변경된 Floating IP 풀 이름
+  security_group_name = openstack_networking_secgroup_v2.web.name
   app_repository     = "https://github.com/yourusername/your-fastapi-app.git"
 }
