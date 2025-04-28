@@ -151,8 +151,8 @@ resource "openstack_compute_interface_attach_v2" "instance_interface" {
 module "app_server" {
   source = "./modules/app"
 
-  environment          = var.environment
-  instance_count       = var.instance_count
+  environment         = var.environment
+  instance_count      = var.instance_count
   image_id            = var.image_id
   flavor_name         = var.flavor_name
   key_name            = var.key_name
