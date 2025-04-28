@@ -56,29 +56,6 @@ resource "openstack_networking_secgroup_rule_v2" "web_http" {
 }
 
 
-# EBS 볼륨 생성 (선택적)
-resource "openstack_blockstorage_volume_v3" "data" {
-  count = var.create_data_volume ? 1 : 0
-
-  name        = "${var.dev_name}-data-volume"
-  size        = var.data_volume_size
-  volume_type = "gp2"
-}
-
-# EBS 볼륨 연결 (선택적)
-resource "openstack_compute_volume_attach_v2" "data_attach" {
-  count = var.create_instance && var.create_data_volume ? 1 : 0
-
-  instance_id = openstack_compute_instance_v2.web[0].id
-  volume_id   = openstack_blockstorage_volume_v3.data[0].id
-}
-
-# S3 버킷 생성 (선택적)
-resource "openstack_objectstorage_container_v1" "storage" {
-  count = var.create_s3_bucket ? 1 : 0
-
-  name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
-}
 
 # 라우터 생성
 resource "openstack_networking_router_v2" "router" {
