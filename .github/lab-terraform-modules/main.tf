@@ -16,23 +16,11 @@ provider "openstack" {
   domain_name       = "kc-kdt-sfacspace2025"
 }
 
-# 디버깅을 위한 출력
-output "auth_url" {
-  value = "https://iam.kakaocloud.com/identity/v3"
-  sensitive = true
-}
 
-output "region" {
-  value = var.region
-}
-
-output "domain_name" {
-  value = "kc-kdt-sfacspace2025"
-}
 
 # 인스턴스 설정
 locals {
-  image_id = var.image_id != "" ? var.image_id : "6f8f7e1c-b801-46c6-940c-603ffc05247a"
+  image_id = "6f8f7e1c-b801-46c6-940c-603ffc05247a"
 }
 
 # 네트워크 보안 그룹 생성
@@ -66,15 +54,14 @@ resource "openstack_networking_secgroup_rule_v2" "web_http" {
 module "web_server" {
   source = "./modules/compute"
 
-  count            = var.create_instance ? 2 : 0
-  create_instance  = var.create_instance
+  create_instance   = var.create_instance
   instance_name    = "${var.dev_name}-web-server-${count.index + 1}"
   image_id         = local.image_id
-  flavor_name      = var.flavor_name
-  key_name         = var.key_name
-  security_groups  = [openstack_networking_secgroup_v2.web.id]
-  network_name     = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
-  root_volume_size = var.root_volume_size
+  flavor_name       = var.flavor_name
+  key_name          = var.key_name
+  security_groups   = [openstack_networking_secgroup_v2.web.id]
+  network_name      = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
+  root_volume_size  = var.root_volume_size
   user_data        = <<-EOF
     #cloud-config
     write_files:
@@ -95,29 +82,6 @@ module "web_server" {
     EOF
 }
 
-# EBS 볼륨 생성 (선택적)
-resource "openstack_blockstorage_volume_v3" "data" {
-  count = var.create_data_volume ? 1 : 0
-
-  name        = "${var.dev_name}-data-volume"
-  size        = var.data_volume_size
-  volume_type = "gp2"
-}
-
-# EBS 볼륨 연결 (선택적)
-resource "openstack_compute_volume_attach_v2" "data_attach" {
-  count = var.create_instance && var.create_data_volume ? 2 : 0
-
-  instance_id = module.web_server[count.index].instance_id
-  volume_id   = openstack_blockstorage_volume_v3.data[0].id
-}
-
-# S3 버킷 생성 (선택적)
-resource "openstack_objectstorage_container_v1" "storage" {
-  count = var.create_s3_bucket ? 1 : 0
-
-  name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
-}
 
 # 로드밸런서 생성
 resource "openstack_lb_loadbalancer_v2" "lb" {

@@ -13,12 +13,3 @@ flavor_name      = "t1i.small"
 key_name         = "lhj-kc-key"
 root_volume_size = 12
 
-# 추가 볼륨 설정
-create_data_volume = false
-data_volume_size   = 50
-
-# 오브젝트 스토리지 설정
-create_s3_bucket = false
-s3_bucket_suffix = "unique-suffix-12345"
-
-subnet_id = "97eca223-44eb-4a55-8082-aaa3686be094" 
