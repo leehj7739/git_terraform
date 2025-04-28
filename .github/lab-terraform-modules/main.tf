@@ -13,7 +13,7 @@ provider "openstack" {
   user_name      = var.username
   password       = var.password
   tenant_name    = var.tenant_name
-  domain_name    = "kc-kdt-sfacspace2025"
+  domain_name    = "Default"
   endpoint_type  = "public"
   allow_reauth   = true
   insecure       = true
@@ -32,7 +32,7 @@ output "region" {
 }
 
 output "domain_name" {
-  value = "kc-kdt-sfacspace2025"
+  value = "Default"
 }
 
 # 인스턴스 설정
