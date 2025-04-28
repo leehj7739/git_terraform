@@ -126,7 +126,7 @@ resource "openstack_objectstorage_container_v1" "storage" {
 
 # 로드밸런서 생성 대신 기존 로드밸런서 사용
 data "openstack_lb_loadbalancer_v2" "existing_lb" {
-  name = "fastapi-lb"  # 기존 로드밸런서 이름
+  name = "lkz-lb"  # 기존 로드밸런서 이름
 }
 
 # 리스너 생성
@@ -155,7 +155,7 @@ resource "openstack_lb_member_v2" "blue_members" {
 }
 
 # 로드밸런서 퍼블릭 IP 출력
-output "loadbalancer_public_ip" { 
+output "loadbalancer_public_ip" {
   description = "로드밸런서의 퍼블릭 IP 주소"
   value       = "210.109.82.75"
 }
