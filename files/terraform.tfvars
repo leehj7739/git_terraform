@@ -4,6 +4,7 @@ dev_name = "lkz"
 
 # 네트워크 설정
 network_name = "sfacspace-default"
+floating_ip_pool = "public"
 
 # 인스턴스 설정
 create_instance   = true
@@ -21,6 +22,8 @@ data_volume_size   = 50
 create_s3_bucket   = false
 s3_bucket_suffix   = "unique-suffix-12345" 
 
-app_repository = "https://github.com/leehj7739/git_terraform.git"
+# 환경 설정
+environment = "blue"
 security_group_name = "default"
+app_repository = "https://github.com/leehj7739/git_terraform.git"
 
