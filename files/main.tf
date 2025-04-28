@@ -162,9 +162,3 @@ module "app_server" {
   security_group_id = openstack_networking_secgroup_v2.web.id
   app_repository    = var.app_repository
 }
-
-variable "domain_name" {
-  description = "OpenStack 도메인 이름"
-  type        = string
-  default     = "kc-kdt-sfacspace2025"
-}
