@@ -7,106 +7,87 @@ on:
     branches: [ main ]
 
 env:
-  TF_VAR_USERNAME: ${{ secrets.TF_VAR_USERNAME }}
-  TF_VAR_PASSWORD: ${{ secrets.TF_VAR_PASSWORD }}
-  TF_VAR_TENANT_NAME: ${{ secrets.TF_VAR_TENANT_NAME }}
+  TF_VAR_PASSWORD: ${{ secrets.OPENSTACK_PASSWORD }}
+  TF_VAR_TENANT_NAME: ${{ secrets.OPENSTACK_TENANT_NAME }}
+  TF_VAR_USERNAME: ${{ secrets.OPENSTACK_USERNAME }}
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: "Terraform"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: "1.5.0"
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"
 
-    - name: Configure OpenStack credentials
-      run: |
-        cat > clouds.yaml << EOF
-        clouds:
-          openstack:
-            auth:
-              auth_url: https://keystone.sfacspace.com:5000/v3
-              username: ${{ env.TF_VAR_USERNAME }}
-              password: ${{ env.TF_VAR_PASSWORD }}
-              project_name: ${{ env.TF_VAR_TENANT_NAME }}
-              user_domain_name: Default
-              project_domain_name: Default
-            region_name: RegionOne
-        EOF
-        mkdir -p ~/.config/openstack
-        mv clouds.yaml ~/.config/openstack/
+      - name: Terraform Init
+        run: |
+          cd .github/lab-terraform-modules
+          terraform init
 
-    - name: Terraform Format
-      id: fmt
-      run: terraform fmt -check
-      working-directory: .github/lab-terraform-modules
-      continue-on-error: true
+      - name: Terraform Plan
+        run: |
+          cd .github/lab-terraform-modules
+          terraform plan
 
-    - name: Terraform Init
-      id: init
-      run: terraform init
-      working-directory: .github/lab-terraform-modules
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd .github/lab-terraform-modules
+          terraform apply -auto-approve
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate
-      working-directory: .github/lab-terraform-modules
+      - name: Get Instance IP
+        run: |
+          cd .github/lab-terraform-modules
+          INSTANCE_IP=$(terraform output -raw instance_ip)
+          echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
-    - name: Terraform Plan
-      id: plan
-      run: terraform plan -no-color
-      working-directory: .github/lab-terraform-modules
-      continue-on-error: true
+      - name: Check FastAPI Server
+        run: |
+          echo "Waiting for FastAPI server to start..."
+          sleep 60
+          curl -f http://${{ env.INSTANCE_IP }}/hello || exit 1
 
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve
-      working-directory: .github/lab-terraform-modules
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+        working-directory: .github/lab-terraform-modules
+        continue-on-error: true
 
-    - name: Get Load Balancer VIP
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      id: lb_vip
-      run: |
-        LB_VIP=$(terraform output -raw lb_vip)
-        echo "LB_VIP=$LB_VIP" >> $GITHUB_ENV
-        echo "Load Balancer VIP: $LB_VIP"
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+        working-directory: .github/lab-terraform-modules
 
-    - name: Check Load Balancer
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        echo "Waiting for Load Balancer to be active..."
-        sleep 60
-        curl -f http://${{ env.LB_VIP }}/hello || exit 1
+      - name: Update Pull Request
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-    - name: Update Pull Request
-      uses: actions/github-script@v6
-      if: github.event_name == 'pull_request'
-      env:
-        PLAN: "${{ steps.plan.outputs.stdout }}"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            <details><summary>Show Plan</summary>
 
-          <details><summary>Show Plan</summary>
+            \`\`\`terraform\n
+            ${process.env.PLAN}
+            \`\`\`
 
-          \`\`\`terraform\n
-          ${process.env.PLAN}
-          \`\`\`
+            </details>`;
 
-          </details>`;
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.name,
-            body: output
-          }) 
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              body: output
+            }) 
