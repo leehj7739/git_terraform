@@ -4,10 +4,6 @@ dev_name = "lkz"
 
 # 네트워크 설정
 network_name = "sfacspace-default"
-network_id = "your-network-id"  # 실제 네트워크 ID로 교체
-external_network_id = "your-external-network-id"  # 실제 외부 네트워크 ID로 교체
-subnet_cidr = "192.168.1.0/24"
-floating_ip_pool = "public"
 
 # 인스턴스 설정
 create_instance   = true
@@ -24,9 +20,3 @@ data_volume_size   = 50
 # 오브젝트 스토리지 설정
 create_s3_bucket   = false
 s3_bucket_suffix   = "unique-suffix-12345" 
-
-# 환경 설정
-environment = "blue"
-security_group_name = "default"
-app_repository = "https://github.com/leehj7739/git_terraform.git"
-

@@ -24,7 +24,7 @@ data "openstack_images_image_v2" "ubuntu" {
 
 # 네트워크 보안 그룹 생성
 resource "openstack_networking_secgroup_v2" "web" {
-  name        = "${var.dev_name}-web-sg-${random_id.sg_suffix.hex}"
+  name        = "${var.project_name}-web-sg"
   description = "Security group for web servers"
 }
 
@@ -55,16 +55,16 @@ resource "openstack_networking_secgroup_rule_v2" "web_http" {
   security_group_id = openstack_networking_secgroup_v2.web.id
 }
 
-# 인스턴스 생성 (선택적)
+# 인스턴스 생성
 resource "openstack_compute_instance_v2" "web" {
   count           = var.create_instance ? 1 : 0
   name            = "${var.dev_name}-web-server"
-  image_id        = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
+  image_id        = var.image_id
   flavor_name     = var.flavor_name
   key_pair        = var.key_name
   security_groups = [openstack_networking_secgroup_v2.web.name]
 
- network {
+  network {
     name = var.network_name
   }
   
@@ -100,37 +100,18 @@ resource "openstack_objectstorage_container_v1" "storage" {
   count = var.create_s3_bucket ? 1 : 0
 
   name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
-} 
-
-module "app_server" {
-  source = "./modules/app"
-
-  environment         = var.environment
-  instance_count     = 2
-  image_id           = var.image_id
-  flavor_name        = var.flavor_name
-  key_name           = var.key_name
-  network_name       = var.network_name
-  security_group_name = openstack_networking_secgroup_v2.web.name
-  app_repository     = "https://github.com/yourusername/your-fastapi-app.git"
-}
-
-variable "domain_name" {
-  description = "OpenStack 도메인 이름"
-  type        = string
-  default     = "kc-kdt-sfacspace2025"
 }
 
 # 라우터 생성
 resource "openstack_networking_router_v2" "router" {
-  name                = "${var.dev_name}-router"
+  name                = "${var.project_name}-router"
   admin_state_up      = true
   external_network_id = var.external_network_id
 }
 
 # 서브넷 생성
 resource "openstack_networking_subnet_v2" "subnet" {
-  name            = "${var.dev_name}-subnet"
+  name            = "${var.project_name}-subnet"
   network_id      = var.network_id
   cidr            = var.subnet_cidr
   ip_version      = 4
@@ -164,4 +145,26 @@ resource "openstack_compute_interface_attach_v2" "instance_interface" {
 
   instance_id = openstack_compute_instance_v2.web[0].id
   port_id     = openstack_networking_port_v2.instance_port[0].id
+}
+
+# 앱 서버 모듈 호출
+module "app_server" {
+  source = "./modules/app"
+
+  project_name      = var.project_name
+  environment       = var.environment
+  instance_count    = var.instance_count
+  image_id          = var.image_id
+  flavor_name       = var.flavor_name
+  key_name          = var.key_name
+  network_id        = var.network_id
+  subnet_id         = openstack_networking_subnet_v2.subnet.id
+  security_group_id = openstack_networking_secgroup_v2.web.id
+  app_repository    = var.app_repository
+}
+
+variable "domain_name" {
+  description = "OpenStack 도메인 이름"
+  type        = string
+  default     = "kc-kdt-sfacspace2025"
 }
