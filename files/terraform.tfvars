@@ -1,6 +1,7 @@
+# OpenStack 인증 정보
 region       = "kr-central-2"
 project_name = "kc-sfacspace"
-dev_name = "lkz"
+dev_name     = "lkz"
 
 # 네트워크 설정
 network_name = "sfacspace-default"
