@@ -19,10 +19,6 @@ output "instance_addresses" {
 }
 
 
-output "lb_vip" {
-  description = "로드밸런서 VIP 주소"
-  value       = openstack_lb_loadbalancer_v2.lb.vip_address
-}
 
 output "instance_ip" {
   description = "인스턴스의 IP 주소"
@@ -34,18 +30,4 @@ output "instance_ips" {
   value       = var.create_instance ? [for server in module.web_server : server.instance_addresses[0].fixed_ip_v4] : []
 }
 
-output "loadbalancer_vip" {
-  description = "로드밸런서 VIP 주소"
-  value       = openstack_lb_loadbalancer_v2.lb.vip_address
-}
-
-output "loadbalancer_id" {
-  description = "로드밸런서 ID"
-  value       = openstack_lb_loadbalancer_v2.lb.id
-}
-
-output "loadbalancer_public_ip" {
-  description = "로드밸런서의 퍼블릭 IP 주소"
-  value       = "210.109.82.75"
-}
 
