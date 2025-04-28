@@ -28,22 +28,3 @@ output "storage_container_name" {
   value       = var.create_s3_bucket ? openstack_objectstorage_container_v1.storage[0].name : null
 }
 
-output "instance_ip" {
-  description = "The IP address of the instance"
-  value       = module.web_server.instance_addresses[0].fixed_ip_v4
-}
-
-output "instance_id" {
-  description = "The ID of the instance"
-  value       = module.web_server.instance_id
-}
-
-output "instance_name" {
-  description = "The name of the instance"
-  value       = module.web_server.instance_name
-}
-
-output "security_group_id" {
-  description = "The ID of the security group"
-  value       = module.web_server.security_group_id
-} 
