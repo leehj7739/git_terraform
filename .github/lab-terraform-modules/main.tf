@@ -53,8 +53,9 @@ resource "openstack_networking_secgroup_rule_v2" "web_http" {
 module "web_server" {
   source = "./modules/compute"
 
+  count            = var.create_instance ? 2 : 0
   create_instance  = var.create_instance
-  instance_name    = "${var.dev_name}-web-server"
+  instance_name    = "${var.dev_name}-web-server-${count.index + 1}"
   image_id         = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
   flavor_name      = var.flavor_name
   key_name         = var.key_name

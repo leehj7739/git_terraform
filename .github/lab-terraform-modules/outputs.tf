@@ -3,19 +3,19 @@ output "security_group_id" {
   value       = openstack_networking_secgroup_v2.web.id
 }
 
-output "instance_id" {
-  description = "생성된 인스턴스의 ID"
-  value       = var.create_instance ? module.web_server.instance_id : null
+output "instance_ids" {
+  description = "생성된 인스턴스들의 ID"
+  value       = var.create_instance ? module.web_server[*].instance_id : []
 }
 
-output "instance_name" {
-  description = "생성된 인스턴스의 이름"
-  value       = var.create_instance ? module.web_server.instance_name : null
+output "instance_names" {
+  description = "생성된 인스턴스들의 이름"
+  value       = var.create_instance ? module.web_server[*].instance_name : []
 }
 
 output "instance_addresses" {
-  description = "생성된 인스턴스의 네트워크 주소"
-  value       = var.create_instance ? module.web_server.instance_addresses : null
+  description = "생성된 인스턴스들의 네트워크 주소"
+  value       = var.create_instance ? module.web_server[*].instance_addresses : []
 }
 
 output "data_volume_id" {
