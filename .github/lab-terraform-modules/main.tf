@@ -59,18 +59,52 @@ resource "openstack_compute_instance_v2" "web" {
   key_pair        = var.key_name
   security_groups = [openstack_networking_secgroup_v2.web.id]
   user_data       = <<-EOF
-                    #cloud-config
-                    write_files:
-                      - path: /root/app/main.py
-                        encoding: b64
-                        content: ${base64encode(file("${path.module}/fastapi_app.py"))}
-                    runcmd:
-                      - mkdir -p /root/app
-                      - apt-get update
-                      - apt-get install -y python3-pip
-                      - pip3 install fastapi uvicorn
-                      - nohup uvicorn app.main:app --host 0.0.0.0 --port 80 --app-dir /root &
-                    EOF
+    #cloud-config
+    write_files:
+      - path: /root/app/main.py
+        content: |
+          from fastapi import FastAPI
+          from datetime import datetime
+          import os
+
+          DEPLOY_TIME_FILE = "/root/app/deploy_time.txt"
+
+          def save_deploy_time():
+              with open(DEPLOY_TIME_FILE, "w") as f:
+                  f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+          def get_deploy_time():
+              if os.path.exists(DEPLOY_TIME_FILE):
+                  with open(DEPLOY_TIME_FILE, "r") as f:
+                      return f.read()
+              return None
+
+          app = FastAPI()
+
+          @app.on_event("startup")
+          async def startup_event():
+              save_deploy_time()
+
+          @app.get("/")
+          async def root():
+              return {"message": "Hello from FastAPI!"}
+
+          @app.get("/hello")
+          async def hello():
+              return {
+                  "message": "Hello from FastAPI!",
+                  "deploy_time": get_deploy_time(),
+                  "current_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+              }
+
+    runcmd:
+      - mkdir -p /root/app
+      - apt-get update
+      - apt-get install -y python3-venv python3-full
+      - python3 -m venv /root/app/venv
+      - . /root/app/venv/bin/activate && pip install fastapi uvicorn
+      - cd /root/app && nohup /root/app/venv/bin/uvicorn main:app --host 0.0.0.0 --port 80 &
+    EOF
 
   network {
     name = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
@@ -123,16 +157,50 @@ module "web_server" {
   network_name      = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
   root_volume_size  = var.root_volume_size
   user_data         = <<-EOF
-                      #cloud-config
-                      write_files:
-                        - path: /root/app/main.py
-                          encoding: b64
-                          content: ${base64encode(file("${path.module}/fastapi_app.py"))}
-                      runcmd:
-                        - mkdir -p /root/app
-                        - apt-get update
-                        - apt-get install -y python3-pip
-                        - pip3 install fastapi uvicorn
-                        - nohup uvicorn app.main:app --host 0.0.0.0 --port 80 --app-dir /root &
-                      EOF
+    #cloud-config
+    write_files:
+      - path: /root/app/main.py
+        content: |
+          from fastapi import FastAPI
+          from datetime import datetime
+          import os
+
+          DEPLOY_TIME_FILE = "/root/app/deploy_time.txt"
+
+          def save_deploy_time():
+              with open(DEPLOY_TIME_FILE, "w") as f:
+                  f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+          def get_deploy_time():
+              if os.path.exists(DEPLOY_TIME_FILE):
+                  with open(DEPLOY_TIME_FILE, "r") as f:
+                      return f.read()
+              return None
+
+          app = FastAPI()
+
+          @app.on_event("startup")
+          async def startup_event():
+              save_deploy_time()
+
+          @app.get("/")
+          async def root():
+              return {"message": "Hello from FastAPI!"}
+
+          @app.get("/hello")
+          async def hello():
+              return {
+                  "message": "Hello from FastAPI!",
+                  "deploy_time": get_deploy_time(),
+                  "current_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+              }
+
+    runcmd:
+      - mkdir -p /root/app
+      - apt-get update
+      - apt-get install -y python3-venv python3-full
+      - python3 -m venv /root/app/venv
+      - . /root/app/venv/bin/activate && pip install fastapi uvicorn
+      - cd /root/app && nohup /root/app/venv/bin/uvicorn main:app --host 0.0.0.0 --port 80 &
+    EOF
 }
