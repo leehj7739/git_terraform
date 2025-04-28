@@ -97,18 +97,16 @@ resource "openstack_objectstorage_container_v1" "storage" {
   name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
 } 
 
-
-
 module "app_server" {
-  source = "./modules/compute"
-  for_each = toset(["app-1","app-2","app-3"])
+  source = "./modules/app"
 
-  create_instance   = var.create_instance
-  instance_name     = "${var.dev_name}-${each.value}-server"
-  image_id          = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.ubuntu.id
-  flavor_name       = var.flavor_name
-  key_name          = var.key_name
-  security_groups   = [openstack_networking_secgroup_v2.web.name]
-  network_name      = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
-  root_volume_size  = var.root_volume_size
+  environment         = var.environment
+  instance_count     = 2
+  image_id           = var.image_id
+  flavor_name        = var.flavor_name
+  key_name           = var.key_name
+  network_name       = var.network_name
+  floating_ip_pool   = var.floating_ip_pool
+  security_group_name = var.security_group_name
+  app_repository     = "https://github.com/yourusername/your-fastapi-app.git"
 }

@@ -105,4 +105,9 @@ variable "dev_name" {
   description = "개발자 이름 (리소스 이름 접두어로 사용)"
   type        = string
   default     = ""
+}
+
+variable "environment" {
+  description = "Environment name (blue/green)"
+  type        = string
 } 
