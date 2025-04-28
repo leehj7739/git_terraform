@@ -5,6 +5,7 @@ resource "openstack_compute_instance_v2" "web" {
   flavor_name     = var.flavor_name
   key_pair        = var.key_name
   security_groups = var.security_groups
+  user_data       = var.user_data
 
   network {
     name = var.network_name

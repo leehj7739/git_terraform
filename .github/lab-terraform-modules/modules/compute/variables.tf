@@ -42,3 +42,9 @@ variable "root_volume_size" {
   type        = number
   default     = 20
 }
+
+variable "user_data" {
+  description = "인스턴스 초기화 스크립트"
+  type        = string
+  default     = ""
+}
