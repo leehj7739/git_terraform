@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    openstack = {
+      source  = "terraform-provider-openstack/openstack"
+      version = ">= 1.49.0"
+    }
+  }
+}
+
 resource "openstack_compute_instance_v2" "app" {
   count           = var.instance_count
   name            = "${var.environment}-app-${count.index + 1}"
