@@ -19,8 +19,8 @@ output "instance_addresses" {
 }
 
 output "instance_ip" {
-  description = "생성된 인스턴스의 IP 주소"
-  value       = var.create_instance ? openstack_compute_instance_v2.web[0].network[0].fixed_ip_v4 : null
+  description = "생성된 인스턴스의 퍼블릭 IP 주소"
+  value       = var.create_instance ? openstack_networking_floatingip_v2.fip[0].address : null
 }
 
 output "data_volume_id" {
