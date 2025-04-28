@@ -37,7 +37,7 @@ resource "openstack_networking_secgroup_rule_v2" "web_ssh" {
   port_range_min    = 22
   port_range_max    = 22
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.web.id
+  security_group_id = openstack_networking_secgroup_v2.web.name
 }
 
 # HTTP 규칙
@@ -48,7 +48,7 @@ resource "openstack_networking_secgroup_rule_v2" "web_http" {
   port_range_min   = 80
   port_range_max   = 80
   remote_ip_prefix = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.web.id
+  security_group_id = openstack_networking_secgroup_v2.web.name
 }
 
 module "web_server" {
@@ -60,7 +60,7 @@ module "web_server" {
   image_id         = local.image_id
   flavor_name       = var.flavor_name
   key_name          = var.key_name
-  security_groups   = [openstack_networking_secgroup_v2.web.id]
+  security_groups   = [openstack_networking_secgroup_v2.web.name]
   network_name      = "75ec8f1b-f756-45ec-b84d-6124b2bd2f2b_7c90b71b-e11a-48dc-83a0-e2bf7394bfb4"
   root_volume_size  = var.root_volume_size
   user_data        = <<-EOF
