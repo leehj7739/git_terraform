@@ -12,8 +12,9 @@ provider "openstack" {
   region      = var.region
   user_name   = var.username
   password    = var.password
-  tenant_name = var.tenant_name # OpenStack 프로젝트 이름
+  tenant_name = var.tenant_name
   domain_name = "kc-kdt-sfacspace2025"
+  insecure    = true
 }
 
 # Ubuntu 이미지 찾기

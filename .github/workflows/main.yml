@@ -26,9 +26,9 @@ jobs:
 
       - name: Debug Environment Variables
         run: |
-          echo "TF_VAR_username is set: ${{ env.TF_VAR_username != '' }}"
-          echo "TF_VAR_tenant_name is set: ${{ env.TF_VAR_tenant_name != '' }}"
-          echo "TF_VAR_password is set: ${{ env.TF_VAR_password != '' }}"
+          echo "TF_VAR_username: ${{ env.TF_VAR_username }}"
+          echo "TF_VAR_tenant_name: ${{ env.TF_VAR_tenant_name }}"
+          echo "TF_VAR_password: ${{ env.TF_VAR_password != '' }}"
 
       - name: Terraform Format
         id: fmt
