@@ -27,11 +27,14 @@ jobs:
 
       - name: Debug Environment Variables
         run: |
+          echo "=== Debug Information ==="
           echo "TF_VAR_username: ${{ env.TF_VAR_username }}"
           echo "TF_VAR_tenant_name: ${{ env.TF_VAR_tenant_name }}"
           echo "TF_VAR_password: ${{ env.TF_VAR_password != '' }}"
-          echo "Region: kr-central-2"
+          echo "TF_VAR_region: ${{ env.TF_VAR_region }}"
           echo "Domain: kc-kdt-sfacspace2025"
+          echo "Auth URL: https://iam.kakaocloud.com/identity/v3"
+          echo "========================="
 
       - name: Terraform Format
         id: fmt
@@ -43,7 +46,7 @@ jobs:
         id: init
         run: |
           cd .github/lab-terraform-modules
-          terraform init
+          terraform init -input=false
 
       - name: Terraform Validate
         id: validate
@@ -54,7 +57,7 @@ jobs:
         id: plan
         run: |
           cd .github/lab-terraform-modules
-          terraform plan -no-color
+          terraform plan -no-color -input=false
         continue-on-error: true
 
       - name: Debug Outputs
@@ -66,7 +69,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd .github/lab-terraform-modules
-          terraform apply -auto-approve
+          terraform apply -auto-approve -input=false
 
       - name: Get Instance IP
         if: github.ref == 'refs/heads/main'
