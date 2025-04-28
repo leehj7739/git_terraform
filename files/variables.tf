@@ -120,5 +120,5 @@ variable "security_group_name" {
 variable "app_repository" {
   description = "애플리케이션 저장소 URL"
   type        = string
-  default     = https://github.com/leehj7739/git_terraform.git
+  default     = "https://github.com/leehj7739/git_terraform.git"
 } 
