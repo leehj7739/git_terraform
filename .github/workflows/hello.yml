@@ -38,3 +38,12 @@ jobs:
             -var="password=${{ secrets.TF_VAR_password }}" \
             -var="tenant_name=${{ secrets.TF_VAR_tenant_name }}" \
             -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./files
+        run: |
+          terraform apply \
+            -var="username=${{ secrets.TF_VAR_username }}" \
+            -var="password=${{ secrets.TF_VAR_password }}" \
+            -var="tenant_name=${{ secrets.TF_VAR_tenant_name }}" \
+            -auto-approve
