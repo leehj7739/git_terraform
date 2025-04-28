@@ -144,19 +144,6 @@ resource "openstack_objectstorage_container_v1" "storage" {
   name = "${var.dev_name}-storage-${var.s3_bucket_suffix}"
 }
 
-# Floating IP 할당
-resource "openstack_networking_floatingip_v2" "fip" {
-  count = var.create_instance ? 1 : 0
-  pool  = "public"
-}
-
-# Floating IP를 인스턴스에 연결
-resource "openstack_networking_floatingip_associate_v2" "fip_associate" {
-  count       = var.create_instance ? 1 : 0
-  floating_ip = openstack_networking_floatingip_v2.fip[0].address
-  port_id     = module.web_server.instance_port_id
-}
-
 module "web_server" {
   source = "./modules/compute"
 

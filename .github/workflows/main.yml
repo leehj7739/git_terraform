@@ -68,22 +68,6 @@ jobs:
       run: terraform apply -auto-approve
       working-directory: .github/lab-terraform-modules
 
-    - name: Get Instance IP
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      id: instance_ip
-      run: |
-        IP=$(terraform output -raw instance_ip)
-        echo "instance_ip=$IP" >> $GITHUB_OUTPUT
-      working-directory: .github/lab-terraform-modules
-
-    - name: Check FastAPI Server
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        echo "Waiting for FastAPI server to start..."
-        sleep 60  # 서버 시작을 위한 대기 시간
-        curl -v http://${{ steps.instance_ip.outputs.instance_ip }}/hello
-      working-directory: .github/lab-terraform-modules
-
     - name: Update Pull Request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
